@@ -29,16 +29,51 @@ export const firestoreChange = functions.firestore.document('registros/{nuevo}')
         const mail = data.email
         const taller = data.taller
         const fecha = data.fecha
-
+        
         //Creación del PDF
         const pdf = new PDFDocument({
-            size: 'letter'
+            size: 'letter',
+            layout: 'landscape'
         })
-        pdf.text(
-            `Saludos ${name}, te recordamos que tu curso "${taller}" es el día ${fecha}`
-        )
+        
+        pdf.font('Times-Bold').fontSize(25).text('UNIVERSIDAD POLITÉCNICA DE CHIAPAS', {
+            align:'center'
+        })
+        pdf.moveDown();
+        pdf.moveDown();
+        pdf.font('Times-Italic').fontSize(25).text('Otorga el siguiente reconocimiento', {
+            align:'center'
+        });
+        pdf.moveDown();
+        pdf.moveDown();
+        pdf.moveDown();
+        pdf.font('Times-Bold').fontSize(15).text(`A el alumno(a): ${name}`, {
+            align:'left'
+        });
+        pdf.moveDown();
+        pdf.moveDown();
+        pdf.moveDown();
+        
+        pdf.font('Times-Roman').fontSize(15).text(`Por haber participado en el taller: ${taller}`, {
+            align:'justify'
+        });
+        
+        pdf.moveDown();
+        pdf.moveDown();
+        pdf.moveDown();
+        pdf.moveDown();pdf.moveDown();pdf.moveDown();pdf.moveDown();
+        pdf.lineJoin('miter')
+        .rect(240, 450, 300, 0)
+        .stroke();
+        pdf.font('Times-Roman').fontSize(15).text('Nombre y firma del director', {
+            align:'center'
+        });
+        pdf.moveDown();
+        pdf.font('Times-Bold').fontSize(15).text(`${fecha}`, {
+            align:'left'
+        });
         pdf.end()
-
+        
         const mailOptions = {
             from: '163189@ids.upchiapas.edu.mx', // Something like: Jane Doe <janedoe@gmail.com>
             to: mail,
@@ -49,7 +84,7 @@ export const firestoreChange = functions.firestore.document('registros/{nuevo}')
                 contentType: 'application/pdf'
             }]
         }
-
+        
         return transporter.sendMail(mailOptions, (erro:any, info:any) => {
             if(erro){
                 console.error(erro)
@@ -57,29 +92,6 @@ export const firestoreChange = functions.firestore.document('registros/{nuevo}')
             console.log('Enviado')
             return Promise.resolve('OK')
         });
-
-
-
-        // sgMail.send({
-        //     from: "163189@ids.upchiapas.edu.mx",
-        //     to: "163189@ids.upchiapas.edu.mx",
-        //     cc: { name: "Some One", email: "someone@example.org" },
-        //     subject: "Test Email",
-        //     text: "This is a test email",
-        //     html: "<p>This is a test email</p>"
-        // }).then(result => {
-        // console.log("Sent email");
-        // }, err => {
-        // console.error(err);
-        // })
-
-        // const msg = {
-        //     to: mail,
-        //     from: '163189@ids.upchiapas.edu.mx',
-        //     subject: 'Taller',
-        //     text: `Saludos ${name}`
-        // };
-        // sgMail.send(JSON.stringify(msg));
     }
     else
     {
